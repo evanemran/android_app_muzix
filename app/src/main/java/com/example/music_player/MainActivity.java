@@ -13,6 +13,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,19 +24,23 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
@@ -71,10 +77,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         hbtnpause = findViewById(R.id.hbtnpause);
 
 
+
         txtnp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (PlayerActivity.mediaPlayer==null || txtnp.getText().toString().equals(""))
+                {
+                    Toast.makeText(MainActivity.this, "No song is playing", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Intent mIntent=new Intent(MainActivity.this, PlayerActivity.class);
+                    mIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(mIntent);
+                }
             }
         });
 
@@ -125,22 +142,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void runtimepermission()
     {
         Dexter.withContext(this)
-                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
+                .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO)
+                .withListener(new MultiplePermissionsListener() {
                     @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
                         display();
-
                     }
 
                     @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
 
                     }
                 }).check();
@@ -193,8 +203,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 String songName = (String) listView.getItemAtPosition(position);
                 String sname = mySongs.get(position).getName().toString();
-                txtnp.setText(sname);
-                txtnp.setSelected(true);
                 startActivity(new Intent(getApplicationContext(),PlayerActivity.class)
                 .putExtra("songs", mySongs)
                         .putExtra("songname",songName)
@@ -255,7 +263,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(this, "Radio here", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.portfolio:
-                Toast.makeText(this, "About me", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this,AboutActivity.class);
+                startActivity(intent);
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -270,7 +279,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         else
         {
+            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            startMain.addCategory(Intent.CATEGORY_HOME);
+            startActivity(startMain);
             super.onBackPressed();
         }
     }
+
+    @Override
+    protected void onResume() {
+        if (PlayerActivity.mediaPlayer!=null)
+        {
+            if (PlayerActivity.mediaPlayer.isPlaying())
+            {
+                hbtnpause.setBackgroundResource(R.drawable.ic_pause_circle);
+            }
+            else {
+                hbtnpause.setBackgroundResource(R.drawable.ic_play_circle);
+            }
+            Intent i = getIntent();
+            String songName = i.getStringExtra(PlayerActivity.EXTRA_NAME);
+            txtnp.setText(songName);
+            txtnp.setSelected(true);
+        }
+        else
+        {
+            hbtnpause.setBackgroundResource(R.drawable.ic_play_circle);
+        }
+        super.onResume();
+    }
+
 }

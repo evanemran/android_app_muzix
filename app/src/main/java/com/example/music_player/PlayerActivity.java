@@ -3,6 +3,8 @@ package com.example.music_player;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
@@ -12,17 +14,24 @@ import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
+import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class PlayerActivity extends AppCompatActivity {
-    Button btnpause,btnprev,btnnext,btnff,btnfr;
+    Button btnpause,btnprev,btnnext,btnff,btnfr,btnloop;
     TextView txtsn,txtsstart,txtsstop;
     SeekBar seekmusic;
+    BarVisualizer mVisualizer;
     String sname;
+    ImageView imageView;
+    public static final String EXTRA_NAME = "song_name";
 
     static MediaPlayer mediaPlayer;
     int position;
@@ -35,7 +44,10 @@ public class PlayerActivity extends AppCompatActivity {
 
         if (item.getItemId()==android.R.id.home)
         {
-            onBackPressed();
+            Intent mIntent=new Intent(PlayerActivity.this, MainActivity.class);
+            sname = mySongs.get(position).getName().toString();
+            mIntent.putExtra(EXTRA_NAME, sname);
+            startActivity(mIntent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -58,6 +70,11 @@ public class PlayerActivity extends AppCompatActivity {
         txtsstop = findViewById(R.id.txtsstop);
         btnff = findViewById(R.id.btnff);
         btnfr = findViewById(R.id.btnfr);
+        btnloop = findViewById(R.id.btnloop);
+
+        mVisualizer = findViewById(R.id.bar);
+        imageView = findViewById(R.id.imageview);
+
 
 
         updateSeekbar = new Thread()
@@ -105,6 +122,19 @@ public class PlayerActivity extends AppCompatActivity {
 
         mediaPlayer = MediaPlayer.create(getApplicationContext(),uri);
         mediaPlayer.start();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                btnnext.performClick();
+            }
+        });
+
+        //visualizer
+        int audioSessionId = mediaPlayer.getAudioSessionId();
+        if (audioSessionId != -1)
+            mVisualizer.setAudioSessionId(audioSessionId);
+
+
 
         String endtime = createtime(mediaPlayer.getDuration());
         txtsstop.setText(endtime);
@@ -176,6 +206,11 @@ public class PlayerActivity extends AppCompatActivity {
                 sname = mySongs.get(position).getName().toString();
                 txtsn.setText(sname);
                 mediaPlayer.start();
+                btnpause.setBackgroundResource(R.drawable.ic_pause);
+                startAnimation(imageView);
+                int audioSessionId = mediaPlayer.getAudioSessionId();
+                if (audioSessionId != -1)
+                    mVisualizer.setAudioSessionId(audioSessionId);
             }
         });
 
@@ -191,6 +226,11 @@ public class PlayerActivity extends AppCompatActivity {
                 sname = mySongs.get(position).getName().toString();
                 txtsn.setText(sname);
                 mediaPlayer.start();
+                btnpause.setBackgroundResource(R.drawable.ic_pause);
+                startAnimation(imageView);
+                int audioSessionId = mediaPlayer.getAudioSessionId();
+                if (audioSessionId != -1)
+                    mVisualizer.setAudioSessionId(audioSessionId);
 
             }
         });
@@ -213,6 +253,24 @@ public class PlayerActivity extends AppCompatActivity {
                 }
             }
         });
+        btnloop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mediaPlayer!=null)
+                {
+                    if (mediaPlayer.isLooping())
+                    {
+                        mediaPlayer.setLooping(false);
+                        btnloop.setBackgroundResource(R.drawable.ic_repeat);
+                    }
+                    else
+                    {
+                        mediaPlayer.setLooping(true);
+                        btnloop.setBackgroundResource(R.drawable.ic_repeat_one);
+                    }
+                }
+            }
+        });
 
 
 
@@ -232,5 +290,28 @@ public class PlayerActivity extends AppCompatActivity {
         time+=sec;
 
         return time;
+    }
+    public void startAnimation(View view)
+    {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "rotation", 0f , 360f);
+        animator.setDuration(1000);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(animator);
+        animatorSet.start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mVisualizer != null)
+            mVisualizer.release();
+        super.onDestroy();
     }
 }

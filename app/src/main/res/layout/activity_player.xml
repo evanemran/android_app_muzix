@@ -4,40 +4,90 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="10"
     android:background="@drawable/mxbg"
     android:orientation="vertical"
+    android:weightSum="10"
     tools:context=".PlayerActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="7"
         android:gravity="center"
-        android:orientation="vertical"
-        android:layout_weight="7">
-        <ImageView
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:src="@drawable/musix">
-
-        </ImageView>
+        android:orientation="vertical">
         <TextView
             android:id="@+id/txtsn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:ellipsize="marquee"
+            android:padding="10dp"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
             android:text="Song Name"
             android:textAlignment="center"
-            android:textSize="22sp"
             android:textColor="#fff"
-            android:textStyle="italic"
-            android:layout_marginTop="20dp"
-            android:singleLine="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:ellipsize="marquee"
-            android:scrollHorizontally="true">
+            android:textSize="22sp"
+            android:layout_marginBottom="20dp"
+            android:textStyle="italic">
 
         </TextView>
-        
+
+        <ImageView
+            android:id="@+id/imageview"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/musix">
+
+        </ImageView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+            <TextView
+                android:id="@+id/txtsstart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/seekbars"
+                android:layout_centerInParent="true"
+                android:layout_alignParentLeft="false"
+                android:layout_marginLeft="20dp"
+                android:text=""
+                android:textColor="#fff"
+                android:textSize="14sp">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/txtsstop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/seekbars"
+                android:layout_centerInParent="true"
+                android:layout_alignParentRight="false"
+                android:text=""
+                android:textColor="#fff"
+                android:textSize="14sp">
+
+            </TextView>
+
+            <SeekBar
+                android:id="@+id/seekbars"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="20dp"
+                android:layout_marginBottom="40dp">
+
+            </SeekBar>
+        </RelativeLayout>
+
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -47,40 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="5dp">
-            <TextView
-                android:id="@+id/txtsstart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/seekbars"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="20dp"
-                android:text=""
-                android:layout_alignParentLeft="true"
-                android:textColor="#fff"
-                android:textSize="14sp">
 
-            </TextView>
-            <TextView
-                android:id="@+id/txtsstop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/seekbars"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="20dp"
-                android:text=""
-                android:layout_alignParentRight="true"
-                android:textColor="#fff"
-                android:textSize="14sp">
-
-            </TextView>
-            <SeekBar
-                android:id="@+id/seekbars"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="40dp">
-
-            </SeekBar>
             <Button
                 android:id="@+id/playbtn"
                 android:layout_width="70dp"
@@ -89,58 +106,80 @@
                 android:background="@drawable/ic_pause">
 
             </Button>
+
             <Button
                 android:id="@+id/btnnext"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_toRightOf="@+id/playbtn"
                 android:layout_marginTop="15dp"
+                android:layout_toRightOf="@+id/playbtn"
                 android:background="@drawable/ic_next">
+
             </Button>
+
             <Button
                 android:id="@+id/btnff"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_toRightOf="@+id/btnnext"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="20dp"
+                android:layout_toRightOf="@+id/btnnext"
                 android:background="@drawable/ic_fast_forward">
+
             </Button>
+
             <Button
                 android:id="@+id/btnfr"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_toLeftOf="@+id/btnprev"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="15dp"
+                android:layout_toLeftOf="@+id/btnprev"
                 android:background="@drawable/ic_fast_rewind">
+
             </Button>
+
             <Button
                 android:id="@+id/btnprev"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_toLeftOf="@+id/playbtn"
                 android:layout_marginTop="15dp"
+                android:layout_toLeftOf="@+id/playbtn"
                 android:background="@drawable/ic_prev">
+
             </Button>
+
             <Button
                 android:id="@+id/btnloop"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_toRightOf="@+id/btnff"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
+                android:layout_toRightOf="@+id/btnff"
                 android:background="@drawable/ic_repeat_one">
+
             </Button>
+
             <Button
                 android:id="@+id/btnshuffle"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_toLeftOf="@+id/btnfr"
-                android:layout_marginRight="10dp"
                 android:layout_marginTop="30dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/btnfr"
                 android:background="@drawable/ic_shuffle">
             </Button>
+
+            <com.gauravk.audiovisualizer.visualizer.BarVisualizer xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/bar"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_alignParentBottom="true"
+                custom:avColor="#FF362E"
+                custom:avDensity="0.5"
+                custom:avSpeed="normal"
+                custom:avType="outline"
+                custom:avWidth="4dp" />
 
         </RelativeLayout>
 
